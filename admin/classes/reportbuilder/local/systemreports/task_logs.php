@@ -99,6 +99,7 @@ class task_logs extends system_report {
             'task_log:pid',
             'task_log:database',
             'task_log:result',
+            'task_log:custom_data',
         ];
 
         $this->add_columns_from_entities($columns);
@@ -121,11 +122,13 @@ class task_logs extends system_report {
     protected function add_filters(): void {
         $filters = [
             'task_log:name',
+            'task_log:id',
             'task_log:type',
             'task_log:output',
             'task_log:result',
             'task_log:timestart',
             'task_log:duration',
+            'task_log:custom_data',
         ];
 
         $this->add_filters_from_entities($filters);

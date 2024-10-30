@@ -110,10 +110,11 @@ class task_log extends base {
             ->add_callback(static function($value, stdClass $row): string {
                 $classname = $row->classname;
                 $output = '';
+                $taskidlabel = new lang_string('taskid', 'admin');
                 if (class_exists($classname)) {
                     $task = new $classname;
                     if ($task instanceof \core\task\task_base) {
-                        $output = $task->get_name();
+                        $output = $task->get_name() . " - {$taskidlabel}: " . $row->id;
                     }
                 }
                 $output .= \html_writer::tag('div', "\\{$classname}", [
@@ -264,6 +265,18 @@ class task_log extends base {
                 return get_string('success');
             });
 
+
+        // Custom Data column.
+        $columns[] = (new column(
+            'custom_data',
+            new lang_string('taskcustomdata', 'admin'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$tablealias}.custom_data")
+            ->set_is_sortable(true);
+
         return $columns;
     }
 
@@ -312,6 +325,26 @@ class task_log extends base {
         ))
             ->add_joins($this->get_joins());
 
+
+        // Task ID filter (Add this section for Task ID).
+        $filters[] = (new filter(
+            number::class,
+            'id',
+            new lang_string('taskid', 'admin'),
+            $this->get_entity_name(),
+            "{$tablealias}.id"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Custom Data filter (Add this section for Custom Data).
+        $filters[] = (new filter(
+            text::class,
+            'custom_data',
+            new lang_string('taskcustomdata', 'admin'),
+            $this->get_entity_name(),
+            "{$tablealias}.custom_data"
+        ))
+            ->add_joins($this->get_joins());
         // Type filter.
         $filters[] = (new filter(
             select::class,

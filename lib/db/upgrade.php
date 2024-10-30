@@ -1462,5 +1462,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024110400.00);
     }
 
+    if ($oldversion < 2024110800.00) {
+        $table = new xmldb_table('task_log');
+        $field = new xmldb_field('custom_data', XMLDB_TYPE_TEXT, null, null, null, null, null, 'pid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_main_savepoint(true, 2024110800.00);
+    }
+
     return true;
 }
